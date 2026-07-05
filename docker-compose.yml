@@ -1,0 +1,33 @@
+services:
+  database:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - myvolume:/data/db
+    networks:
+      - mynetwork
+  backend:
+    image: mybackendapp:v1
+    ports:
+      - "5001:5001"
+    networks:
+      - mynetwork
+    depends_on:
+      - database
+    environment:
+      - MONGO_URL=mongodb://database:27017/foodiehub
+      - PORT=5001
+  frontend:
+    image: myfrontendapp:v1
+    ports:
+      - "8080:80"
+    networks:
+      - mynetwork
+    depends_on:
+      - backend
+volumes:
+  myvolume: {}
+networks:
+  mynetwork:
+    driver: bridge
